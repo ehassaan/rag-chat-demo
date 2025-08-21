@@ -1,44 +1,47 @@
 # Vue Chat Frontend
 
-This project is a chat application built with Vue.js, Vite, and Vuetify 3. It allows users to create and manage conversations, send messages, and store their API key securely.
+This project is a chat application built with Vue 3, Vite, and Vuetify 3. It allows users to create and manage conversations, send messages, and securely store their API key. The frontend integrates with the FastAPI Chat Storage Microservice backend.
 
 ## Features
 
-- Create new conversations
-- Rename existing conversations
-- Send messages within conversations
+- Create, rename, and delete conversations
+- Mark conversations as favorite
+- Send and view messages within conversations
+- Date breaks and unread message indicators in message list
+- Load more messages (pagination)
 - Input field for API key, stored in cookies
+- Context menu (three-dot menu) for conversation actions
 - Integration with Chat Storage Microservice APIs
+- Responsive and compact view support
+- Snackbar notifications for actions and errors
 
 ## Project Structure
 
 ```
-vue-chat-frontend
+frontend/
 ├── src
-│   ├── assets                # Static assets like images and fonts
 │   ├── components            # Vue components for the application
-│   │   ├── ChatInput.vue     # Input field for sending messages
-│   │   ├── ConversationList.vue # Displays list of conversations
-│   │   ├── ConversationRename.vue # Allows renaming of conversations
-│   │   ├── MessageList.vue    # Displays messages of the selected conversation
-│   │   └── ApiKeyInput.vue    # Input for API key
+│   │   ├── ChatInput.vue
+│   │   ├── ConversationList.vue
+│   │   ├── MessageList.vue
+│   │   ├── ApiKeyInput.vue
 │   ├── composables           # Composable functions for state management
-│   │   ├── useApiKey.ts      # Handles API key storage and retrieval
-│   │   └── useChatStorage.ts  # Interacts with Chat Storage Microservice APIs
-│   ├── views                 # View components for the application
-│   │   └── ChatView.vue      # Main interface for the chat application
-│   ├── router                # Routing configuration
-│   │   └── index.ts          # Defines routes and components
-│   ├── store                 # Vuex store for state management
-│   │   └── index.ts          # Manages chat sessions and messages
-│   ├── App.vue               # Root component of the application
-│   └── main.ts               # Entry point of the application
+│   │   ├── useApiKey.ts
+│   │   ├── useChat.ts        # Handles chat session/message logic
+│   ├── views
+│   │   └── ChatView.vue
+│   ├── router
+│   │   └── index.ts
+│   ├── store                 # Pinia stores for state management
+│   │   └── index.ts
+│   ├── App.vue
+│   └── main.ts
 ├── public
-│   └── favicon.ico           # Favicon for the application
-├── index.html                # Main HTML file
-├── package.json              # npm configuration file
-├── tsconfig.json             # TypeScript configuration file
-└── vite.config.ts            # Vite configuration file
+│   └── favicon.ico
+├── index.html
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
 ```
 
 ## Installation
@@ -48,9 +51,9 @@ vue-chat-frontend
    git clone <repository-url>
    ```
 
-2. Navigate to the project directory:
+2. Navigate to the frontend directory:
    ```
-   cd vue-chat-frontend
+   cd frontend
    ```
 
 3. Install dependencies:
@@ -65,10 +68,13 @@ vue-chat-frontend
 
 ## Usage
 
-- Open your browser and navigate to `http://localhost:3000` (or the port specified in your terminal).
-- Enter your API key in the provided input field.
-- Create or select a conversation to start chatting.
+- Open your browser and navigate to `http://localhost:3000` (or the port shown in your terminal).
+- Enter your API key in the input field (stored in cookies).
+- Create, select, rename, favorite, or delete conversations using the sidebar.
+- Send and view messages in the selected conversation.
+- Use the "Load More" button to fetch older messages.
+- Unread messages and date breaks are visually indicated in the message list.
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed
