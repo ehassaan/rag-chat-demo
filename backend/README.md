@@ -7,23 +7,11 @@ This project is a FastAPI-based microservice for managing chat sessions and mess
 - **Chat Sessions Management**: Create, retrieve, update, and delete chat sessions.
 - **Chat Messages Management**: Add and retrieve messages for sessions.
 - **API Key Authentication**: Secure endpoints with API key authentication (header: `X-API-Key`).
-- **User-Specific Rate Limiting**: Prevent abuse with per-user limits using SlowAPI.
+- **Rate Limiting**: Prevent abuse with global and IP address specific rate limits using SlowAPI.
 - **Centralized Logging**: Log application events and errors for monitoring.
 - **Global Error Handling**: Consistent error responses across the API.
 - **Docker Support**: Easily deploy the application using Docker.
 - **Vector Storage**: Store and query vector embeddings with pgvector.
-
-## Tech Stack
-
-## Tech Stack
-
-- **FastAPI**: High-performance Python web framework for building APIs.
-- **SQLModel**: ORM and data validation library built on SQLAlchemy and Pydantic.
-- **PostgreSQL**: Relational database for persistent storage.
-- **SlowAPI**: Rate limiting middleware for FastAPI.
-- **Uvicorn**: ASGI server for running FastAPI applications.
-- **Alembic**: Library for database migrations and versioning.
-- **Docker & Docker Compose**: Containerization and orchestration for development and deployment.
 
 ## Directory Structure
 
@@ -202,10 +190,19 @@ Below are the main API endpoints provided by the FastAPI Chat Storage Microservi
 - `GET /openapi.json`
   - OpenAPI json file for endpoint and schema discovery in API client tools (Postman/Insomnia)
 
-
 ## Testing
 
 To run the tests:
 ```
 pytest
 ```
+
+## Tech Stack
+
+- **FastAPI**: High-performance Python web framework for building APIs.
+- **SQLModel**: ORM and data validation library built on SQLAlchemy and Pydantic.
+- **PostgreSQL**: Relational database for persistent storage.
+- **SlowAPI**: Rate limiting middleware for FastAPI.
+- **Uvicorn**: ASGI server for running FastAPI applications.
+- **Alembic**: Library for database migrations and versioning.
+- **Docker & Docker Compose**: Containerization and orchestration for development and deployment.
