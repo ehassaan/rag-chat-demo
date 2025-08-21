@@ -21,7 +21,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./db_data:/var/lib/postgresql
+      - db_data:/var/lib/postgresql
     networks:
       - chat_network
 
@@ -35,3 +35,7 @@ services:
 
 networks:
   chat_network:
+
+volumes:
+  db_data:
+    driver: local

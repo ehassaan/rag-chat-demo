@@ -122,6 +122,23 @@ To build and run the entire application using single command:
 docker-compose up --build
 ```
 
+### Create initial database structure
+
+To create initial database structure in an empty database, please run the database migrations,
+
+Linux,
+```sh
+export PYTHONPATH=.
+export DATABASE_URL=<your_db_conn_str>
+alembic upgrade head
+```
+Windows,
+```cmd
+set PYTHONPATH=.
+set DATABASE_URL=<your_db_conn_str>
+alembic upgrade head
+```
+
 ## API Authentication
 
 All endpoints require an API key in the header:
@@ -136,6 +153,43 @@ User-specific rate limits are enforced using SlowAPI. Limits are configured via 
 ## API Documentation
 
 Interactive API docs are available at [http://localhost:8000/docs](http://localhost:8000/docs) after starting the application.
+
+### API Endpoints
+
+Below are the main API endpoints provided by the FastAPI Chat Storage Microservice. Detailed API docs can be found in /docs endpoint.
+
+#### Session Endpoints
+
+- `GET /api/v1/sessions/`
+  - List all chat sessions.
+- `POST /api/v1/sessions/`
+  - Create a new chat session.
+- `GET /api/v1/sessions/{session_id}`
+  - Retrieve details of a specific chat session.
+- `PATCH /api/v1/sessions/{session_id}`
+  - Update a chat session (e.g., rename, mark as favorite).
+- `DELETE /api/v1/sessions/{session_id}`
+  - Delete a chat session.
+
+#### Message Endpoints
+
+- `GET /api/v1/sessions/{session_id}/messages`
+  - List messages for a specific chat session (supports pagination).
+- `POST /api/v1/sessions/{session_id}/messages`
+  - Add a new message to a chat session.
+- `DELETE /api/v1/messages/{message_id}`
+  - Delete a given message.
+
+
+#### Other Endpoints
+
+- `GET /healthz`
+  - Returns a simple status message to verify the service is running.
+- `GET /docs`
+  - Endpoint for OpenAPI/Swagger docs.
+- `GET /openapi.json`
+  - OpenAPI json file for endpoint and schema discovery in API client tools (Postman/Insomnia)
+
 
 ## Testing
 

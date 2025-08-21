@@ -2,13 +2,13 @@ import logging
 from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import Session, select
 from typing import List
-from models.chat import ChatMessage
-from schemas.chat import ChatMessageCreate
-from db.session import get_db_session
+from app.models.chat import ChatMessage
+from app.schemas.chat import ChatMessageCreate
+from app.db.session import get_db_session
 
 router = APIRouter()
 
-@router.post("/sessions/{session_id}/messages", response_model=ChatMessage)
+@router.post("/sessions/{session_id}/messages", response_model=ChatMessage, status_code=201)
 def create_message(
     session_id: int,
     message: ChatMessageCreate,
@@ -18,7 +18,8 @@ def create_message(
     db_message = ChatMessage.model_validate(message)
     session.add(db_message)
     session.commit()
-    return message
+    session.refresh(db_message)
+    return db_message
 
 
 @router.get("/sessions/{session_id}/messages", response_model=List[ChatMessage])
@@ -32,7 +33,7 @@ def read_messages(
     messages = session.exec(
         select(ChatMessage)
         .where(ChatMessage.session_id == session_id)
-        .order_by(ChatMessage.timestamp.desc())
+        .order_by(ChatMessage.created_at.desc())
         .offset(offset)
         .limit(limit)
     ).all()

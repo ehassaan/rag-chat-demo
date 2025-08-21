@@ -25,10 +25,10 @@
             </v-btn>
           </v-list-item-action> -->
           <v-list-item-action>
-            <v-btn id="menu-activator" size="x-small" :loading="loading.menu" icon="$mdiDotsVertical"></v-btn>
+            <v-btn :id="'menu-activator' + session.session_id" size="x-small" :loading="loading.menu" icon="$mdiDotsVertical"></v-btn>
           </v-list-item-action>
 
-          <v-menu activator="#menu-activator">
+          <v-menu :activator="'#menu-activator' + session.session_id">
             <v-list>
               <v-list-item>
                 <v-list-item-title @click="onRename(session.session_id)">Rename</v-list-item-title>

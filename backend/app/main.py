@@ -1,9 +1,9 @@
 from fastapi import FastAPI
-from api.v1 import chat_sessions, chat_messages
-from core.logging import setup_logging
-from core.config import settings
-from middlewares.index import configure_middlewares
-from dependencies.auth import ValidateApiKey
+from app.api.v1 import chat_sessions, chat_messages
+from app.core.logging import setup_logging
+from app.core.config import settings
+from app.middlewares.index import configure_middlewares
+from app.dependencies.auth import ValidateApiKey
 
 
 app = FastAPI(title="Chat Storage Microservice")

@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
-from src.main import app
-from src.models.chat import ChatSession, ChatMessage
-from src.db.session import get_session
+from app.main import app
+from app.models.chat import ChatSession, ChatMessage
+from app.db.session import get_session
 from sqlmodel import Session
 
 client = TestClient(app)

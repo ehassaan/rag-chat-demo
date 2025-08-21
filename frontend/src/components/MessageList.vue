@@ -12,7 +12,7 @@
       <v-list-item-content>
         <v-list-item-title class="font-weight-bold">
           {{ message.sender === 'assistant' ? 'Assistant' : 'You' }}
-          <span class="message-time">{{ message.timestamp }}</span>
+          <span class="message-time">{{ message.created_at }}</span>
         </v-list-item-title>
         <v-list-item-subtitle class="message-content">
           {{ message.content }}

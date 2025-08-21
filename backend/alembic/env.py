@@ -4,11 +4,11 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from dotenv import dotenv_values
 from sqlmodel import SQLModel
-from src.models import *
+from app.models import *
 from alembic import context
 
 
-env = dotenv_values("./.env")
+env = dotenv_values("./.env.local")
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

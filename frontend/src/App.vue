@@ -1,6 +1,6 @@
 <template>
   <v-app class="app">
-      <ChatView />
+    <ChatView />
   </v-app>
 </template>
 

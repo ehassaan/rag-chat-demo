@@ -1,14 +1,14 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Response
 from sqlmodel import Session, select
 from typing import List
-from models.chat import ChatSession
-from db.session import get_db_session
-from schemas.chat import ChatSessionCreate, ChatSessionPatch
+from app.models.chat import ChatSession
+from app.db.session import get_db_session
+from app.schemas.chat import ChatSessionCreate, ChatSessionPatch
 
 router = APIRouter()
 
 
-@router.post("/", response_model=ChatSession)
+@router.post("/", response_model=ChatSession, status_code=201)
 async def create_chat_session(
     data: ChatSessionCreate,
     db: Session = Depends(get_db_session),
@@ -16,6 +16,7 @@ async def create_chat_session(
     model = ChatSession.model_validate(data)
     db.add(model)
     db.commit()
+    db.refresh(model) # Refresh to get the ID and other defaults set by the database
     return model
 
 
@@ -52,6 +53,7 @@ async def update_chat_session(
         raise HTTPException(status_code=404, detail="Chat session not found")
     db_session.sqlmodel_update(session.model_dump(exclude_unset=True))
     db.commit()
+    db.refresh(db_session)
     return db_session
 
 
