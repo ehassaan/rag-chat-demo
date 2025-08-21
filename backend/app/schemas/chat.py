@@ -11,6 +11,6 @@ class ChatSessionPatch(SQLModel):
     is_favorite: Optional[bool] = Field(False, description="Marks session as favorite")
 
 class ChatMessageCreate(SQLModel):
-    session_id: Optional[int] = Field(description="ID of the chat session this message belongs to")
+    session_id: Optional[int] = Field(None, description="ID of the chat session this message belongs to")
     content: str = Field(description="Content of the chat message")
     role: str = Field("user", description="Role of the message sender (e.g., 'user', 'assistant')")

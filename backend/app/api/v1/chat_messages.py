@@ -7,18 +7,23 @@ from app.schemas.chat import ChatMessageCreate
 from app.db.session import get_db_session
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
-@router.post("/sessions/{session_id}/messages", response_model=ChatMessage, status_code=201)
+@router.post("/sessions/{session_id}/messages", response_model=ChatMessageCreate, status_code=201)
 def create_message(
     session_id: int,
     message: ChatMessageCreate,
     session: Session = Depends(get_db_session),
 ):
-    message.session_id = session_id
-    db_message = ChatMessage.model_validate(message)
-    session.add(db_message)
-    session.commit()
-    session.refresh(db_message)
+    try:
+        message.session_id = session_id
+        db_message = ChatMessage.model_validate(message)
+        session.add(db_message)
+        session.commit()
+        session.refresh(db_message)
+    except Exception as e:
+        logger.error(f"Error creating message: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
     return db_message
 
 

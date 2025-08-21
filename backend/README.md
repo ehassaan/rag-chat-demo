@@ -13,6 +13,18 @@ This project is a FastAPI-based microservice for managing chat sessions and mess
 - **Docker Support**: Easily deploy the application using Docker.
 - **Vector Storage**: Store and query vector embeddings with pgvector.
 
+## Tech Stack
+
+## Tech Stack
+
+- **FastAPI**: High-performance Python web framework for building APIs.
+- **SQLModel**: ORM and data validation library built on SQLAlchemy and Pydantic.
+- **PostgreSQL**: Relational database for persistent storage.
+- **SlowAPI**: Rate limiting middleware for FastAPI.
+- **Uvicorn**: ASGI server for running FastAPI applications.
+- **Alembic**: Library for database migrations and versioning.
+- **Docker & Docker Compose**: Containerization and orchestration for development and deployment.
+
 ## Directory Structure
 
 ```
@@ -36,8 +48,8 @@ fastapi-chat-storage
 │   │   ├── config.py
 │   │   ├── logging.py
 │   │   ├── errors.py
+│   ├── dependencies
 │   │   ├── auth.py
-│   │   └── rate_limit.py
 │   ├── middlewares
 │   │   ├── __init__.py
 │   │   ├── index.py

@@ -16,6 +16,7 @@ class ChatSession(SQLModel, table=True):
 class ChatMessage(SQLModel, table=True):
     message_id: Optional[int] = Field(default=None, primary_key=True)
     session_id: int = Field(foreign_key="chatsession.session_id")
+    role: str = Field("user", description="Role of the message sender (e.g., 'user', 'assistant')")
     content: str = Field(description="Content of the chat message")
     created_at: dt.datetime = Field(default_factory=dt.datetime.now, description="Timestamp when the session was created")
     updated_at: dt.datetime = Field(default_factory=dt.datetime.now, description="Timestamp when the session was last updated")
