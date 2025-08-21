@@ -1,0 +1,9 @@
+# cache
+__pycache__
+
+db_data/
+
+# Env files
+.env
+.env.*
+!.env.example
