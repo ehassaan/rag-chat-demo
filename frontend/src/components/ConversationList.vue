@@ -1,40 +1,28 @@
 <template>
-  <v-navigation-drawer app permanent width="300" class="sidebar">
-    <v-toolbar flat color="primary" class="sidebar-toolbar">
-      <v-toolbar-title class="white--text">Conversations</v-toolbar-title>
-    </v-toolbar>
-    <v-divider></v-divider>
+  <v-navigation-drawer permanent width="320" class="sidebar">
     <v-list nav dense>
       <v-list-item v-for="session in sessions" :key="session.session_id" :value="session.session_id"
         :active="currentSession === session.session_id" @click="onConversationChange(session.session_id)"
         class="sidebar-list-item">
         <template v-slot:prepend>
-          <v-btn :loading="loading.favorite" :color="session.is_favorite ? 'primary' : 'backround'"
-            @click="onFavorite(session.session_id, !session.is_favorite)" size="x-small" icon="$mdiFavorite"></v-btn>
+          <v-btn :loading="session.loading" :color="session.is_favorite ? 'primary' : 'backround'"
+            @click="onFavorite(session, !session.is_favorite)" size="x-small" icon="$mdiFavorite"></v-btn>
         </template>
         <v-list-item-title class="ml-2">{{ session.session_name }}</v-list-item-title>
         <template v-slot:append>
-          <!-- <v-list-item-action>
-            <v-btn :loading="loading.rename" size="x-small" icon="$mdiEdit"
-              @click.stop="() => onRename(session.session_id)">
-            </v-btn>
-          </v-list-item-action>
+
           <v-list-item-action>
-            <v-btn size="x-small" :loading="loading.delete" icon="$mdiDelete"
-              @click.stop="() => onDelete(session.session_id)">
-            </v-btn>
-          </v-list-item-action> -->
-          <v-list-item-action>
-            <v-btn :id="'menu-activator' + session.session_id" size="x-small" :loading="loading.menu" icon="$mdiDotsVertical"></v-btn>
+            <v-btn :id="'menu-activator' + session.session_id" size="x-small" :loading="session.loading"
+              icon="$mdiDotsVertical"></v-btn>
           </v-list-item-action>
 
           <v-menu :activator="'#menu-activator' + session.session_id">
             <v-list>
               <v-list-item>
-                <v-list-item-title @click="onRename(session.session_id)">Rename</v-list-item-title>
+                <v-list-item-title @click="onRename(session)">Rename</v-list-item-title>
               </v-list-item>
               <v-list-item>
-                <v-list-item-title @click="onDelete(session.session_id)">Delete</v-list-item-title>
+                <v-list-item-title @click="onDelete(session)">Delete</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -48,7 +36,6 @@
         New Conversation
       </v-btn>
     </template>
-    <v-divider></v-divider>
 
   </v-navigation-drawer>
 
@@ -64,16 +51,16 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useChat } from '../composables/useChat';
+import { ChatSession, useChat } from '../composables/useChat';
 
 const emit = defineEmits(['selectionChanged']);
 const { sessions, fetchSessions, patchSession, deleteSession, createSession } = useChat();
 
 const currentSession = ref<string | null>(null);
 const loading = ref({
-  menu: false,
   create: false,
-  favorite: false
+  // menu: false,
+  // favorite: false
 });
 
 const snackbar = ref(false);
@@ -84,64 +71,60 @@ const onConversationChange = (sessionId: string) => {
   emit('selectionChanged', sessionId);
 };
 
-const onRename = async (sessionId: string) => {
+const onRename = async (session: ChatSession) => {
   try {
-    loading.value.menu = true;
-    const session = sessions.value.find(s => s.session_id === sessionId);
+    session.loading = true;
     if (session) {
       const newName = prompt('Enter new name for the conversation:', session.session_name);
       if (newName && newName.trim()) {
-        await patchSession(sessionId, { session_name: newName.trim() });
+        await patchSession(session.session_id, { session_name: newName.trim() });
         await fetchSessions();
       }
     }
   }
-  catch (error) {
+  catch (error: any) {
     console.error('Error renaming session:', error);
     message.value = 'Error renaming session: ' + error.message;
     snackbar.value = true;
   }
   finally {
-    loading.value.menu = false;
+    session.loading = false;
   }
 };
 
-async function onDelete(sessionId: string) {
+async function onDelete(session: ChatSession) {
   try {
-    loading.value.menu = true;
-    await deleteSession(sessionId);
-    if (currentSession.value === sessionId) {
+    session.loading = true;
+    await deleteSession(session.session_id);
+    if (currentSession.value === session.session_id) {
       currentSession.value = sessions.value.length > 0 ? sessions.value[0].session_id : null;
       emit('selectionChanged', currentSession.value);
     }
     await fetchSessions();
   }
-  catch (error) {
+  catch (error: any) {
     console.error('Error deleting session:', error);
     message.value = 'Error deleting session: ' + error.message;
     snackbar.value = true;
   }
   finally {
-    loading.value.menu = false;
+    session.loading = false;
   }
 }
 
-async function onFavorite(sessionId: string, isFavorite: boolean) {
+async function onFavorite(session: ChatSession, isFavorite: boolean) {
   try {
-    loading.value.favorite = true;
-    const session = sessions.value.find(s => s.session_id === sessionId);
-    if (session) {
-      await patchSession(sessionId, { is_favorite: isFavorite });
-      await fetchSessions();
-    }
+    session.loading = true;
+    await patchSession(session.session_id, { is_favorite: isFavorite });
+    await fetchSessions();
   }
-  catch (error) {
+  catch (error: any) {
     console.error('Error updating favorite status:', error);
     message.value = 'Error updating favorite status: ' + error.message;
     snackbar.value = true;
   }
   finally {
-    loading.value.favorite = false;
+    session.loading = false;
   }
 }
 
@@ -156,7 +139,7 @@ async function onCreateSession() {
       emit('selectionChanged', currentSession.value);
     }
   }
-  catch (error) {
+  catch (error: any) {
     console.error('Error creating session:', error);
     message.value = 'Error creating session: ' + error.message;
     snackbar.value = true;
@@ -175,7 +158,7 @@ onMounted(async () => {
       emit('selectionChanged', currentSession.value);
     }
   }
-  catch (error) {
+  catch (error: any) {
     console.error('Error fetching sessions:', error);
     message.value = 'Error fetching sessions: ' + error.message;
     snackbar.value = true;
@@ -185,7 +168,6 @@ onMounted(async () => {
 
 <style scoped>
 .sidebar {
-  min-height: 100vh;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
 }
 
@@ -203,8 +185,9 @@ onMounted(async () => {
 }
 
 .btn-new-chat {
-  width: 100%;
   margin: 10px;
+  margin-bottom: 10px;
+  flex: 1 0 120px;
   width: calc(100% - 20px);
 }
 </style>

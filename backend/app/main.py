@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api.v1 import chat_sessions, chat_messages
+from app.api.v1 import message_controller, rag_controller, session_controller
 from app.core.logging import setup_logging
 from app.core.config import settings
 from app.middlewares.index import configure_middlewares
@@ -16,15 +16,22 @@ app = configure_middlewares(app)
 
 # Include API routes
 app.include_router(
-    chat_sessions.router,
+    session_controller.router,
     prefix="/api/v1/sessions",
     tags=["chat_sessions"],
     dependencies=[ValidateApiKey],
 )
 app.include_router(
-    chat_messages.router,
+    message_controller.router,
     prefix="/api/v1",
     tags=["chat_messages"],
+    dependencies=[ValidateApiKey],
+)
+
+app.include_router(
+    rag_controller.router,
+    prefix="/api/v1/rag",
+    tags=["rag"],
     dependencies=[ValidateApiKey],
 )
 

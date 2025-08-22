@@ -3,8 +3,17 @@ import { useApiKey } from './useApiKey';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+export interface ChatSession {
+    session_id: string;
+    session_name: string;
+    created_at: string;
+    updated_at: string;
+    is_favorite: boolean;
+    loading?: boolean;
+}
+
 export function useChat() {
-    const sessions = ref([]);
+    const sessions = ref<ChatSession[]>([]);
     const { apiKey } = useApiKey();
 
     const fetchSessions = async () => {
@@ -42,6 +51,28 @@ export function useChat() {
         return response;
     };
 
+    const indexDocument = async (documentName: string, documentContent: string, conversationId: string) => {
+        const response = await postApi(`${API_BASE_URL}/rag/index`, {
+            document_name: documentName,
+            document_content: documentContent,
+            session_id: conversationId
+        });
+        return response;
+    };
+
+    const getSimilarChunks = async (query: string, conversationId: string) => {
+        const response = await getApi(`${API_BASE_URL}/rag/search?query=${query}&session_id=${conversationId}`);
+        return response;
+    };
+
+    const generateResponse = async (prompt: string, conversationId: string) => {
+        const response = await postApi(`${API_BASE_URL}/rag/generate`, {
+            prompt,
+            session_id: conversationId
+        });
+        return response;
+    };
+
     const getApi = async (url: stringy) => {
         const response = await fetch(url, {
             method: 'GET',
@@ -55,6 +86,7 @@ export function useChat() {
         }
         return response.json();
     };
+
 
 
     const postApi = async (url: string, body: any) => {
@@ -109,6 +141,9 @@ export function useChat() {
         patchSession,
         sendMessage,
         fetchMessages,
-        deleteSession
+        deleteSession,
+        indexDocument,
+        getSimilarChunks,
+        generateResponse
     };
 }

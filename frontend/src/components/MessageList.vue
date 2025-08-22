@@ -1,23 +1,23 @@
 <template>
   <v-list class="message-list">
-    <v-list-item elevation="2" v-for="message in messages.toReversed()" :key="message.id"
-      :class="message.sender === 'user' ? 'user-message' : 'assistant-message'" class="mb-2">      
+    <v-list-item elevation="1" v-for="message in messages.toReversed()" :key="message.id"
+      :class="message.role === 'user' ? 'message user-message' : 'message assistant-message'" class="mb-2">      
       <template #prepend>
-        <v-avatar size="32" :color="message.sender === 'user' ? 'secondary' : 'primary'">
+        <v-avatar size="32" :color="message.role === 'user' ? 'secondary' : 'primary'">
           <v-icon>
-            {{ message.sender === 'assistant' ? 'mdi-robot' : 'mdi-account' }}
+            {{ message.role === 'assistant' ? '$mdiRobot' : '$mdiAccount' }}
           </v-icon>
         </v-avatar>
       </template>
-      <v-list-item-content>
+      <div>
         <v-list-item-title class="font-weight-bold">
-          {{ message.sender === 'assistant' ? 'Assistant' : 'You' }}
+          {{ message.role === 'assistant' ? 'Assistant' : 'You' }}
           <span class="message-time">{{ message.created_at }}</span>
         </v-list-item-title>
         <v-list-item-subtitle class="message-content">
           {{ message.content }}
         </v-list-item-subtitle>
-      </v-list-item-content>
+      </div>
     </v-list-item>
   </v-list>
 </template>
@@ -37,28 +37,36 @@ const props = defineProps({
   /* border-radius: 12px; */
   /* overflow-y: auto; */
   /* color: #222; */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.message {
+  border-radius: 8px;
+  padding: 10px 10px !important;
+  margin-top: 10px;
+  width: 60%;
 }
 
 .user-message {
-  border-radius: 8px;
-  padding: 8px 16px;
+  background-color: rgb(var(--v-theme-secondary));
+  align-self: flex-end;
 }
 
 .assistant-message {
-  border-radius: 8px;
-  padding: 8px 16px;
+  align-self: flex-start;
 }
 
 .message-content {
-  font-size: 1.05rem;
-  margin-top: 2px;
+  font-size: 1.1rem;
+  margin-top: 5px;
   white-space: pre-line;
 }
 
 .message-time {
   font-size: 0.8rem;
-  color: #888;
   margin-left: 8px;
-  font-weight: normal;
+  font-weight: 100;
 }
 </style>

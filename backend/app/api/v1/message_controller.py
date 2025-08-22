@@ -5,6 +5,7 @@ from typing import List
 from app.models.chat import ChatMessage
 from app.schemas.chat import ChatMessageCreate
 from app.db.session import get_db_session
+from app.services import message_service
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -12,19 +13,10 @@ logger = logging.getLogger(__name__)
 @router.post("/sessions/{session_id}/messages", response_model=ChatMessageCreate, status_code=201)
 def create_message(
     session_id: int,
-    message: ChatMessageCreate,
-    session: Session = Depends(get_db_session),
+    data: ChatMessageCreate,
+    db: Session = Depends(get_db_session),
 ):
-    try:
-        message.session_id = session_id
-        db_message = ChatMessage.model_validate(message)
-        session.add(db_message)
-        session.commit()
-        session.refresh(db_message)
-    except Exception as e:
-        logger.error(f"Error creating message: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
-    return db_message
+    return message_service.create_message(session_id, data, db)
 
 
 @router.get("/sessions/{session_id}/messages", response_model=List[ChatMessage])
@@ -34,14 +26,7 @@ def read_messages(
     limit: int = 20,
     session: Session = Depends(get_db_session),
 ):
-    limit = min(limit, 100)
-    messages = session.exec(
-        select(ChatMessage)
-        .where(ChatMessage.session_id == session_id)
-        .order_by(ChatMessage.created_at.desc())
-        .offset(offset)
-        .limit(limit)
-    ).all()
+    messages = message_service.read_messages(session_id, offset, limit, session)
     return messages
 
 

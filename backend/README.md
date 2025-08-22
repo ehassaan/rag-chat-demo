@@ -115,16 +115,16 @@ To run the application locally:
 uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### Docker
+### Docker (Recommended)
 
-To build and run the entire application using single command:
+If you are using docker then, you can skip all the above setup and run the entire application using single command:
 ```
-docker-compose up --build
+docker compose up --build
 ```
 
 ### Create initial database structure
 
-To create initial database structure in an empty database, please run the database migrations,
+When starting the application for the first time, you need to create initial database structure in your empty database, please run the database migrations,
 
 Linux,
 ```sh
