@@ -9,7 +9,7 @@ from app.models.chat import ChatSession
 
 class DocumentIndex(BaseModel, table=True):
     id: int = Field(primary_key=True)
-    session_id: int = Field(foreign_key="chatsession.session_id")
+    session_id: int = Field(foreign_key="chatsession.session_id", ondelete="CASCADE")
     document_id: str = Field(description="ID of the document")
     chunk_text: str = Field(description="Content of the document")
     chunk_index: int = Field(description="Index of the chunk within the document")
@@ -18,4 +18,4 @@ class DocumentIndex(BaseModel, table=True):
         "text", description="Type of the document (e.g., 'text', 'image', 'video')"
     )
 
-    session: ChatSession = Relationship(back_populates="document_chunks")
+    # session: ChatSession = Relationship(back_populates="document_chunks")

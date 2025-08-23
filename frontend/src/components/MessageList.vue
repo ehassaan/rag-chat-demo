@@ -1,7 +1,7 @@
 <template>
   <v-list class="message-list">
     <v-list-item elevation="1" v-for="message in messages.toReversed()" :key="message.id"
-      :class="message.role === 'user' ? 'message user-message' : 'message assistant-message'" class="mb-2">      
+      :class="message.role === 'user' ? 'message user-message' : 'message assistant-message'" class="mb-2">
       <template #prepend>
         <v-avatar size="32" :color="message.role === 'user' ? 'secondary' : 'primary'">
           <v-icon>
@@ -9,14 +9,12 @@
           </v-icon>
         </v-avatar>
       </template>
-      <div>
-        <v-list-item-title class="font-weight-bold">
-          {{ message.role === 'assistant' ? 'Assistant' : 'You' }}
-          <span class="message-time">{{ message.created_at }}</span>
-        </v-list-item-title>
-        <v-list-item-subtitle class="message-content">
-          {{ message.content }}
-        </v-list-item-subtitle>
+      <v-list-item-title class="font-weight-bold">
+        {{ message.role === 'assistant' ? 'Assistant' : 'You' }}
+        <span class="message-time">{{ message.created_at }}</span>
+      </v-list-item-title>
+      <div class="message-content text-wrap">
+        {{ message.content }}
       </div>
     </v-list-item>
   </v-list>
@@ -61,7 +59,6 @@ const props = defineProps({
 .message-content {
   font-size: 1.1rem;
   margin-top: 5px;
-  white-space: pre-line;
 }
 
 .message-time {

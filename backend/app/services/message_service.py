@@ -13,10 +13,12 @@ def create_message(
     message: ChatMessageCreate,
     db: Session,
 ) -> ChatMessage:
-
+    
+    print("=======---------------------Creating Message: ", session_id, message)
     try:
         message.session_id = session_id
         db_message = ChatMessage.model_validate(message)
+        print("=======---------------------Validated Message: ", session_id, db_message)
         db.add(db_message)
         db.commit()
         db.refresh(db_message)

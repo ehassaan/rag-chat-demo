@@ -60,14 +60,10 @@ export function useChat() {
         return response;
     };
 
-    const getSimilarChunks = async (query: string, conversationId: string) => {
-        const response = await getApi(`${API_BASE_URL}/rag/search?query=${query}&session_id=${conversationId}`);
-        return response;
-    };
-
-    const generateResponse = async (prompt: string, conversationId: string) => {
-        const response = await postApi(`${API_BASE_URL}/rag/generate`, {
-            prompt,
+    const generateChatResponse = async (text: string, conversationId: string) => {
+        const response = await postApi(`${API_BASE_URL}/rag/chat`, {
+            content: text,
+            role: "user",
             session_id: conversationId
         });
         return response;
@@ -143,7 +139,8 @@ export function useChat() {
         fetchMessages,
         deleteSession,
         indexDocument,
-        getSimilarChunks,
-        generateResponse
+        generateChatResponse,
+        // getSimilarChunks,
+        // generateResponse
     };
 }

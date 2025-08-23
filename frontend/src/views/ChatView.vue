@@ -12,14 +12,14 @@
 
     <ConversationList @selectionChanged="onSessionChanged" />
     <v-main class="main">
-      <MessageList class="message-list" :messages="messages" />
+      <MessageList class="message-list" :messages="vmMessages" />
       <ChatInput class="message-input" @send="sendMessage" @document-opened="onDocumentOpened" v-model="vmMessage"
-        :loading-send="loading.send" :loading-attach="loading.attach" />
+        :loading-send="vmLoading.send" :loading-attach="vmLoading.attach" />
     </v-main>
 
     <!-- toast notification for error -->
     <v-snackbar v-model="snackbar" multi-line timeout="6000">
-      {{ message }}
+      {{ vmSnackbar }}
       <template v-slot:actions>
         <v-btn color="red" variant="text" @click="snackbar = false">
           Close
@@ -38,8 +38,8 @@ import { ref, watch } from 'vue';
 import { useChat } from '@/composables/useChat';
 
 const currentSessionId = ref<string | null>(null);
-const messages = ref([]);
-const loading = ref({
+const vmMessages = ref([]);
+const vmLoading = ref({
   send: false,
   fetch: false,
   attach: false
@@ -47,7 +47,7 @@ const loading = ref({
 
 const chat = useChat();
 const vmMessage = ref('');
-const message = ref<string | null>(null);
+const vmSnackbar = ref<string | null>(null);
 const snackbar = ref(false);
 
 
@@ -55,42 +55,34 @@ async function onSessionChanged(id: string) {
   console.log('Selected session ID:', id);
   currentSessionId.value = id;
   try {
-    messages.value = [];
-    messages.value = await chat.fetchMessages(id);
+    vmMessages.value = [];
+    vmMessages.value = await chat.fetchMessages(id);
   }
   catch (error) {
     console.error('Error fetching messages:', error);
-    message.value = 'Error fetching messages: ' + error.message;
+    vmSnackbar.value = 'Error fetching messages: ' + error.message;
     snackbar.value = true;
   }
 }
 
 const sendMessage = async (message: string) => {
   try {
-    loading.value.send = true;
+    vmLoading.value.send = true;
     if (message.trim() && currentSessionId.value) {
       console.log('Sending message:', message);
-      await chat.sendMessage(currentSessionId.value, message);
-      const chunks = await chat.getSimilarChunks(message, currentSessionId.value);
-      console.log('Similar chunks:', chunks);
-      const prompt = `
-        Query: ${message}
-        Context: ${chunks.map(c => c.chunk_text).join('\n')}
-      `;
-      console.log("Using Prompt: ", prompt);
-      const res = await chat.generateResponse(prompt, currentSessionId.value);
+      const res = await chat.generateChatResponse(message, currentSessionId.value);
       console.log("Generation Response: ", res);
       vmMessage.value = '';
-      messages.value = await chat.fetchMessages(currentSessionId.value); // Refresh messages
+      vmMessages.value = await chat.fetchMessages(currentSessionId.value); // Refresh messages
     }
   }
-  catch (error) {
+  catch (error: any) {
     console.error('Error sending message:', error);
-    message.value = 'Error: ' + error.message;
+    vmSnackbar.value = 'Error: ' + error.message;
     snackbar.value = true;
   }
   finally {
-    loading.value.send = false;
+    vmLoading.value.send = false;
   }
 };
 
@@ -99,16 +91,16 @@ async function onDocumentOpened(doc: any) {
     return;
   }
   try {
-    loading.value.attach = true;
+    vmLoading.value.attach = true;
     const res = await chat.indexDocument(doc.name, doc.content, currentSessionId.value);
   }
   catch (error: any) {
     console.error('Error sending message:', error);
-    message.value = 'Error: ' + error.message;
+    vmSnackbar.value = 'Error: ' + error.message;
     snackbar.value = true;
   }
   finally {
-    loading.value.attach = false;
+    vmLoading.value.attach = false;
   }
 }
 

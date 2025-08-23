@@ -56,10 +56,10 @@ def generate_response(
     text = response.message.content[0].text
     serialized = RootModel[list[GenerationDocument]](documents).model_dump_json()
     msg = ChatMessage(
+        session_id=session_id,
         content=text,
         role="assistant",
         context=serialized,
-        session_id=session_id,
     )
     return msg
 
@@ -103,10 +103,14 @@ def chat(query: str, session_id: int, db: Session):
     messages.append(new_message)
 
     messages = [{"content": m.content, "role": m.role} for m in messages]
-    documents = [{"data": d.chunk_text, "id": d.document_id} for d in similar_chunks]
+    documents = [
+        {"data": d.chunk_text, "id": f"{d.document_id}_{d.id}"} for d in similar_chunks
+    ]
 
     response = generate_response(
         messages=messages, documents=documents, session_id=session_id
     )
-    message = message_service.create_message(session_id, response, db)
-    return message
+    print("--------GENERATED RESPONSE: ", session_id, response)
+    message_service.create_message(session_id, new_message, db)
+    res_msg = message_service.create_message(session_id, response, db)
+    return res_msg

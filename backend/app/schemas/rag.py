@@ -31,6 +31,7 @@ class GenerationMessage(SQLModel):
     content: str = Field(description="Content of the chat message")
     role: str = Field(description="Role of the message sender (e.g., 'user', 'assistant')")
 
+
 class GenerationDocument(SQLModel):
     id: Optional[str] = Field(None, description="ID of the document")
     data: str = Field(description="Content of the document")
@@ -40,3 +41,6 @@ class GenerationRequest(SQLModel):
     documents: list[GenerationDocument] = Field(description="List of documents")
     session_id: int = Field(description="ID of the chat session")
 
+
+class GenerationChatRequest(GenerationMessage):
+    session_id: int = Field(description="ID of the chat session")
